@@ -103,3 +103,57 @@ def top_signal(heights):
 
 print("탑 신호 받기 :", top_signal([6, 3, 5, 6, 4]))
 print("탑 신호 받기 :", top_signal([2, 9, 7, 6, 3, 5, 6, 4, 3, 6, 4]))
+
+
+
+"""
+next greater elements
+  입력 : 자연수 리스트
+  출력 : 각 원소에 대해 오른쪽 방향으로 가장 가까이 위치한 '자신보다 큰 값'을 담은 리스트
+        첫번째 원소와 마지막 원소가 이어져 있다고(순환) 가정, 모든 값이 기준 값보다 작다면 -1
+  예시 : 입력 [7, 3] → 출력 [-1, 7]
+"""
+def nge(nums):
+    answer = [-1 for _ in range(len(nums)) ]
+    stack = s.Stack()
+    for i in range(len(nums)*2):
+        idx = i % len(nums)
+        while not stack.is_empty() and nums[stack.peek()] < nums[idx]:
+            answer[stack.pop()] = nums[idx]
+        stack.push(idx)
+    return answer
+
+
+print(nge([1,2,3,4,3])) #[2,3,4,-1,4]
+
+
+
+"""
+처음으로 작아지는 수
+  입력 : 자연수 리스트
+  출력 : 오른쪽 방향으로, 처음으로 자신보다 작은 수가 나왔을 때를 찾는다. 
+        그 숫자와 자신과의 거리(몇 칸 떨어져 있는지)를 저장한다. 
+        모든 수가 자신보다 크다면 마지막 원소와의 거리를 담은 '공백으로 구분된 문자열' 반환
+  예시 : 입력 [5,4,3,2,3] → 출력 1 1 1 1 0
+"""
+
+def sol(lst):
+    answer = [0] * len(lst)
+    stack = s.Stack()
+
+    for i in range(len(lst)):
+        while not stack.is_empty() and lst[stack.peek()] > lst[i]:
+            idx = stack.pop()
+            answer[idx] = i-idx
+        stack.push(i)
+
+        if i == len(lst) - 1:
+            while not stack.is_empty() :
+                idx = stack.pop()
+                answer[idx] = i-idx
+
+    return ' '.join(map(str, answer))
+
+
+print(sol([3, 5, 2, 7])) # 2 1 1 0
+print(sol([5, 4, 4, 6, 3])) # 1 3 2 1 0
