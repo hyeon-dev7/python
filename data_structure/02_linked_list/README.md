@@ -8,6 +8,7 @@
 ├── singly_examples.py      # 단방향 관련 예제 풀이 (LeetCode 참고)
 └── singly_test.py          # 단방향 클래스 및 예제 테스트 코드
 ```
+<br>
 
 ## 📄 `singly_examples.py` : 단방향 연결 리스트 예제 모음
 
@@ -19,17 +20,21 @@
 | `detect_cycle` | 사이클 시작 노드 찾기                   | [LeetCode 142](https://leetcode.com/problems/linked-list-cycle-ii)              |
 | `reorder_list` | 노드 재배열 (L0 → Ln → L1 → Ln-1 …) | [LeetCode 143](https://leetcode.com/problems/reorder-list)                      |
 | `is_palindrome` | 리스트의 회문 여부 확인                  | [LeetCode 234](https://leetcode.com/problems/palindrome-linked-list)            |
+| `reverse_between`  | 특정 구간 뒤집기 (left ~ right)                   | [LeetCode 92](https://leetcode.com/problems/reverse-linked-list-ii) |
+| `reverse_k_group`  | k개씩 뒤집기                                      | [LeetCode 25](https://leetcode.com/problems/reverse-nodes-in-k-group) |
+| `rotate_right`     | 연결 리스트를 오른쪽으로 k만큼 회전               | [LeetCode 61](https://leetcode.com/problems/rotate-list)            |
+| `add_two_numbers`  | 연결 리스트를 활용한 두 숫자의 덧셈               | [LeetCode 445](https://leetcode.com/problems/add-two-numbers-ii)    |
 <br>모든 예제는 LeetCode 문제를 참고하였으나,          
 LeetCode의 ListNode 구조가 아닌 직접 구현한 `SinglyLinkedList` 클래스를 기반으로 작성했습니다.       
-따라서 LeetCode에 바로 제출할 수 있는 구조는 아닙니다.
+더미 헤드를 포함하고 있기 때문에 LeetCode에 바로 제출할 수 있는 구조는 아닙니다.
 
 ---
 
 ### 현재 상태
-1. `DoublyLinkedList` 구현 중이며, 주요 기능이 완성되면 업데이트할 계획입니다.       
-2. `SinglyLinkedList` 기반으로 단방향 연결 리스트 예제를 연습하고 있습니다. 
-   - `reverse_between()` 등 미완성 문제도 추후 추가 예정입니다.  
+`DoublyLinkedList` 구현 중이며, splice 연산에서 오류를 발견하여 수정 중입니다.       
+  
 
 ---
 ### 업데이트 이력  
-- 2025.07.22 : 초기 예제 정리 및 README 작성  
+- 2025.08.03 : SLL 예제 추가(4개), README 수정 
+- 2025.07.22 : 단방향 연결 리스트(SLL) 구현 및 예제 풀이, README 작성

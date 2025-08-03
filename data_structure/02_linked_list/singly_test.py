@@ -153,6 +153,40 @@ def test_reverse_between():
     print("reverse_between test 통과")
 
 
+def test_reverse_k_group():
+    assert str(se.reverse_k_group(make_sll([1, 2, 3, 4]), 2)) == "2 → 1 → 4 → 3"
+    assert str(se.reverse_k_group(make_sll([1, 2, 3, 4, 5, 6, 7]), 3)) == "3 → 2 → 1 → 6 → 5 → 4 → 7"
+    assert str(se.reverse_k_group(make_sll([1, 2, 3, 4, 5]), 5)) == "5 → 4 → 3 → 2 → 1"
+    assert str(se.reverse_k_group(make_sll([1, 3, 1]), 3)) == "1 → 3 → 1"
+    assert str(se.reverse_k_group(make_sll([7, 8, 9]), 1)) == "7 → 8 → 9"
+    assert str(se.reverse_k_group(make_sll([1, 2, 3]), 9)) == "1 → 2 → 3"
+    assert str(se.reverse_k_group(make_sll([1]), 1)) == "1"
+    assert str(se.reverse_k_group(make_sll([]), 2)) == ""
+    print("reverse_k_group test 통과")
+
+
+def test_rotate_right():
+    assert str(se.rotate_right(make_sll([]), 5)) == ""
+    assert str(se.rotate_right(make_sll([1]), 0)) == "1"
+    assert str(se.rotate_right(make_sll([1, 2]), 1)) == "2 → 1"
+    assert str(se.rotate_right(make_sll([1, 2, 3]), 3)) == "1 → 2 → 3"
+    assert str(se.rotate_right(make_sll([5, 6, 7, 8, 9]), 7)) == "8 → 9 → 5 → 6 → 7"
+    assert str(se.rotate_right(make_sll([10, 20, 30, 40]), 2)) == "30 → 40 → 10 → 20"
+    assert str(se.rotate_right(make_sll([1, 3, 5, 7, 9, 11]), 3)) == "7 → 9 → 11 → 1 → 3 → 5"
+    print("rotate_right test 통과")
+
+
+def test_add_two_numbers():
+    assert str(se.add_two_numbers(make_sll([7, 2, 4, 3]), make_sll([5, 6, 4]))) == "7 → 8 → 0 → 7"
+    assert str(se.add_two_numbers(make_sll([9, 9]), make_sll([9, 9]))) == "1 → 9 → 8"
+    assert str(se.add_two_numbers(make_sll([5]), make_sll([1, 9]))) == "2 → 4"
+    assert str(se.add_two_numbers(make_sll([0]), make_sll([0]))) == "0"
+    assert str(se.add_two_numbers(make_sll([6, 4, 6, 0, 4, 4, 9]),
+                                  make_sll([3, 8, 7, 0, 3, 0, 1]))) == "1 → 0 → 3 → 3 → 0 → 7 → 5 → 0"
+    assert str(se.add_two_numbers(make_sll([9, 9, 9, 9]), make_sll([1]))) == "1 → 0 → 0 → 0 → 0"
+
+    print("add_two_numbers test 통과")
+
 
 if __name__ == "__main__":
     print("▶ 클래스 기능 테스트")
@@ -167,4 +201,7 @@ if __name__ == "__main__":
     test_detect_cycle()
     test_reorder_list()
     test_is_palindrome()
-    # test_reverse_between()
+    test_reverse_between()
+    test_reverse_k_group()
+    test_rotate_right()
+    test_add_two_numbers()

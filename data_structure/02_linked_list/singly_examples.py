@@ -146,10 +146,107 @@ def reverse_from(node): # node부터 끝까지 뒤집기
 
 def reverse_between(sll, left, right):
     """특정 구간 뒤집기 (LeetCode 92 참고)"""
-    pass
+    if sll.size()<right :
+        return sll
+    prev = sll.head
+    for _ in range(1,left):
+        prev = prev.next
+    curr = prev.next.next
+    tail = prev.next
+    for _ in range(right - left):
+        next = curr.next
+        curr.next = prev.next
+        prev.next = curr
+        curr = next
+    tail.next = curr
+    # print(sll)
+    return sll
 
 
 
+def reverse_k_group(sll, k):
+    """ k개씩 뒤집기 (LeetCode 25 참고)"""
+    if sll.head.next :
+       sll.head.next = reverse_recursive(sll.head.next, k)
+    return sll
+
+def reverse_recursive(node, k):
+    curr = node
+    for _ in range(k):
+        if curr is None :
+            return node
+        curr = curr.next
+    prev = None
+    curr = node
+    for _ in range(k):
+        next = curr.next
+        curr.next = prev
+        prev = curr
+        curr = next
+    node.next = reverse_recursive(curr, k)
+    return prev
 
 
+
+def rotate_right(sll, k):
+    """연결 리스트를 오른쪽으로 k만큼 회전 (LeetCode 61)"""
+    if sll.is_empty():
+        return sll
+    cnt = 1
+    cur = sll.head.next
+    while cur.next:
+        cnt += 1
+        cur = cur.next
+
+    k = k % cnt
+    if k == 0:
+        return sll
+
+    mid = sll.head
+    for i in range(cnt - k):
+        mid = mid.next
+    new_mid = sll.head.next
+    sll.head.next = mid.next
+    mid.next = None
+    cur.next = new_mid
+
+    return sll
+
+
+def add_two_numbers(l1, l2):
+    """연결 리스트를 활용한 두 숫자의 덧셈 (LeetCode 445 참고)"""
+    a = l1.head.next
+    b = l2.head.next
+    stck1 = []
+    stck2 = []
+    while a or b:
+        if a:
+            stck1.append(a.key)
+            a = a.next
+        if b:
+            stck2.append(b.key)
+            b = b.next
+    c = 0
+    res = singly_linked_list.SinglyLinkedList()
+    while stck1 or stck2 or c == 1:
+        if stck1 and stck2:
+            x = stck1.pop()
+            y = stck2.pop()
+            z = (x + y + c) % 10
+            c = (x + y + c) // 10
+
+        elif stck1:
+            x = stck1.pop()
+            z = (x + c) % 10
+            c = (x + c) // 10
+
+        elif stck2:
+            y = stck2.pop()
+            z = (y + c) % 10
+            c = (y + c) // 10
+        else:
+            z = 1
+            c = 0
+        res.push_front(z)
+    return res
 
