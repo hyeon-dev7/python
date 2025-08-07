@@ -3,8 +3,9 @@
 단방향 연결 리스트 관련 예제 풀이를 모아놓은 폴더입니다.
 ```
 02_linked_list/
-├── doubly_linked_list.py   # 양방향 연결 리스트 (Singly Linked List) 클래스 (구현 중)
-├── singly_linked_list.py   # 단방향 연결 리스트 (Doubly Linked List) 클래스 구현
+├── doubly_linked_list.py   # 양방향 연결 리스트 클래스 구현
+├── doubly_test.py          # 양방향 클래스 테스트 코드
+├── singly_linked_list.py   # 단방향 연결 리스트 클래스 구현
 ├── singly_examples.py      # 단방향 관련 예제 풀이 (LeetCode 참고)
 └── singly_test.py          # 단방향 클래스 및 예제 테스트 코드
 ```
@@ -29,12 +30,12 @@ LeetCode의 ListNode 구조가 아닌 직접 구현한 `SinglyLinkedList` 클래
 더미 헤드를 포함하고 있기 때문에 LeetCode에 바로 제출할 수 있는 구조는 아닙니다.
 
 ---
-
 ### 현재 상태
-`DoublyLinkedList` 구현 중이며, splice 연산에서 오류를 발견하여 수정 중입니다.       
-  
+- 현재 DoublyLinkedList의 splice 검사는 반복 횟수 제한(max_iter) 방식으로 구현되어 있습니다. <br>
+- ( → 추후 Node.owner 방식으로 구조 개선 예정 )
 
 ---
 ### 업데이트 이력  
+- 2025.08.07 : 양방향 연결 리스트(DLL) 및 테스트 코드 추가
 - 2025.08.03 : SLL 예제 추가(4개), README 수정 
 - 2025.07.22 : 단방향 연결 리스트(SLL) 구현 및 예제 풀이, README 작성
