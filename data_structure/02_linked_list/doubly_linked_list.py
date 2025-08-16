@@ -17,80 +17,100 @@
 """
 
 class Node:
-    def __init__(self, key=None):
+    def __init__(self, key=None, owner=None):
         self.key = key
         self.next = self
         self.prev = self
+        self.owner = owner
 
     def __str__(self):
         return str(self.key)
 
 class DoublyLinkedList:
     def __init__(self):
-        self.head = Node()
-        self.tail = Node()
+        self.head = Node(owner=self)
+        self.tail = Node(owner=self)
         self.head.next = self.tail
         self.tail.prev = self.head
 
 
     def splice(self, start_node, end_node, insert_after):
         """start_node부터 end_node까지의 구간을 잘라내어 insert_after 뒤에 삽입"""
-
+        if (start_node in (start_node.owner.head, start_node.owner.tail)
+                or end_node in (end_node.owner.head, end_node.owner.tail)
+                or insert_after == self.tail):
+            return  # 더미 노드 조작 방지
         if start_node is None or end_node is None or insert_after is None:
             return
-        # no-op : 이미 원하는 위치에 있어 실제 이동이 필요 없음
         if start_node is end_node and insert_after.next is start_node:
+            return # no-op : 이미 원하는 위치에 있어 실제 이동이 필요 없음
+        if not self._is_valid_splice(start_node, end_node, insert_after):
             return
-        if self._is_valid_splice(start_node, end_node, insert_after):
-            # 잘라내기
-            sp = start_node.prev
-            en = end_node.next
-            sp.next = en
-            en.prev = sp
-            # 삽입
-            xn = insert_after.next
-            insert_after.next = start_node
-            start_node.prev = insert_after
-            xn.prev = end_node
-            end_node.next = xn
+
+        # 잘라내기
+        sp = start_node.prev
+        en = end_node.next
+        sp.next = en
+        en.prev = sp
+        # 삽입
+        xn = insert_after.next
+        insert_after.next = start_node
+        start_node.prev = insert_after
+        xn.prev = end_node
+        end_node.next = xn
+
+        # owner 업데이트 (다른 리스트에서 가져오는 경우에만)
+        if start_node.owner != self :
+            self.update_owner(start_node, end_node)
 
 
     def _is_valid_splice(self, start, end, after):
-        """ splice 연산 수행 전 조건 확인 """
-        # 1) start → end 연결 확인 + after가 해당 구간 안에 있으면 안 됨
+        """
+        splice 연산 수행 전 조건 확인 :
+        1) start와 end는 같은 리스트에 속해야 함
+        2) start → end 구간이 연결되어 있어야 함
+        3) after가 해당 구간 안에 있으면 안 됨
+        4) after는 현재 리스트(self)에 속해 있어야 함
+        """
+        if start.owner != end.owner:
+            return False
+
         curr = start
-        max_iter = 10000
-        cnt = 0
         found_end = False
-        while curr and cnt < max_iter:
-            cnt +=1
+        while curr and curr != start.owner.tail:
             if curr is after:
                 return False
-            if curr == end :
+            if curr == end:
                 found_end = True
                 break
             curr = curr.next
 
         if not found_end:
             return False
+        return after.owner == self
 
-        # 2) after가 self에 속해 있는지
-        curr = self.head
-        while curr != self.tail:
-            if curr == after:
-                return True
+
+    def update_owner(self, start, end):
+        curr = start
+        while curr != end.next:
+            curr.owner = self
             curr = curr.next
-        return False
 
 
     def move_after(self, node, insert_after):
-        """ node를 insert_after 뒤로 이동"""
+        """ node를 insert_after 뒤로 이동
+        node와 insert_after가 해당 리스트에 속하지 않으면 아무 작업도 하지 않고 None 반환 """
+        if node.owner != self or insert_after.owner != self :
+            return None
         if node.prev is insert_after: # no-op
             return
         self.splice(node, node, insert_after)
 
     def move_before(self, node, insert_before):
-        """ node를 insert_before 앞으로 이동"""
+        """ node를 insert_before 앞으로 이동
+        node와 insert_before가 해당 리스트에 속하지 않으면 아무 작업도 하지 않고 None 반환"""
+        if node.owner != self or insert_before.owner != self :
+            return None
         if node.next is insert_before: # no-op
             return
         self.splice(node, node, insert_before.prev)
@@ -98,12 +118,12 @@ class DoublyLinkedList:
 
     def push_front(self, key):
         """리스트 맨 앞(head 다음)에 새 노드 추가"""
-        node = Node(key)
+        node = Node(key, self)
         self.splice(node, node, self.head)
 
     def push_back(self, key):
         """리스트 맨 앞(head 다음)에 새 노드 추가"""
-        node = Node(key)
+        node = Node(key, self)
         self.splice(node, node, self.tail.prev)
 
     def insert(self, node, key):
@@ -113,7 +133,7 @@ class DoublyLinkedList:
         curr = self.head.next
         while curr != self.tail :
             if curr == node:
-                new = Node(key)
+                new = Node(key, self)
                 self.splice(new, new, node.prev)
                 return True
             curr = curr.next
@@ -152,6 +172,7 @@ class DoublyLinkedList:
         node.prev.next = node.next
         node.next.prev = node.prev
         node.next = node.prev = None # 참조 해제
+        node.owner = None
         del node
 
     def size(self):

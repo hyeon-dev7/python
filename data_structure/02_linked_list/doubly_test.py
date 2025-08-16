@@ -9,9 +9,11 @@ def make_dll(values):
 def test_push_and_pop():
     dll = make_dll([10, 20, 30])
     assert str(dll) == "10 ⇆ 20 ⇆ 30"
+    assert dll.head.next.owner == dll
 
     dll.push_front(5)
     assert str(dll) == "5 ⇆ 10 ⇆ 20 ⇆ 30"
+    assert dll.head.next.owner == dll
 
     front = dll.pop_front()
     back = dll.pop_back()
@@ -29,10 +31,12 @@ def test_insert_search_delete():
 
     found = dll.search(3)
     assert found.key == 3
+    assert found.owner == dll
 
     deleted = dll.delete(dll.search(99))
     assert deleted == 99
     assert str(dll) == "1 ⇆ 2 ⇆ 3"
+    assert dll.search(99) is None
     print("insert/search/delete test 통과")
 
 
@@ -50,18 +54,31 @@ def test_move_after_before():
     dll = make_dll([1, 2, 3, 4, 5])
     dll.move_after(dll.search(2), dll.search(4))
     assert str(dll) == "1 ⇆ 3 ⇆ 4 ⇆ 2 ⇆ 5"
+    assert dll.search(2).owner == dll
 
     dll = make_dll([10, 20, 30, 40, 50])
     dll.move_before(dll.search(50), dll.search(10))
     assert str(dll) == "50 ⇆ 10 ⇆ 20 ⇆ 30 ⇆ 40"
+    assert dll.search(50).owner == dll
 
-    dll = make_dll([99])
+    dll = make_dll([99]) # no-op
     dll.move_after(dll.search(99), dll.search(99))
     assert str(dll) == "99"
+    assert dll.search(99).owner == dll
 
-    dll = make_dll([1, 2, 3])
+    dll = make_dll([1, 2, 3]) # no-op
     c = dll.search(3)
     dll.move_before(c, c)
+    assert str(dll) == "1 ⇆ 2 ⇆ 3"
+
+    external_node = Node(100)
+    result = dll.move_after(external_node, dll.search(2))
+    assert result is None
+    assert external_node.owner is None
+
+    result = dll.move_before(external_node, dll.search(10))
+    assert result is None
+    assert external_node.owner is None
     assert str(dll) == "1 ⇆ 2 ⇆ 3"
 
     print("move_after/before test 통과")
@@ -74,17 +91,23 @@ def test_splice():
     B.splice(A.search(3), A.search(3), B.tail.prev)
     assert str(A) == "1 ⇆ 2 ⇆ 4 ⇆ 5"
     assert str(B) == "6 ⇆ 7 ⇆ 3"
+    assert A.search(3) is None
+    assert B.search(7).owner == B
 
     # 2) 연속 구간
     B.splice(A.search(2), A.search(4), B.search(7))
     assert str(A) == "1 ⇆ 5"
     assert str(B) == "6 ⇆ 7 ⇆ 2 ⇆ 4 ⇆ 3"
+    assert B.search(2).owner == B
+    assert B.search(4).owner == B
 
     # 3) 전체 (B → A)
     A.splice(B.head.next, B.tail.prev, A.tail.prev)
     assert str(A) == "1 ⇆ 5 ⇆ 6 ⇆ 7 ⇆ 2 ⇆ 4 ⇆ 3"
     assert str(B) == ""
     assert B.is_empty()
+    assert A.search(5).owner == A
+    assert A.search(6).owner == A
 
     # 4) start와 end가 서로 다른 리스트에 속해 있는 경우
     A = make_dll([1, 2, 3])
@@ -92,9 +115,11 @@ def test_splice():
     B.splice(A.search(2), B.search(5), B.search(4))  # 잘못된 splice
     assert str(A) == "1 ⇆ 2 ⇆ 3"
     assert str(B) == "4 ⇆ 5 ⇆ 6"
+    assert A.search(2).owner == A
+    assert B.search(5).owner == B
 
     # 5) after가 splice 구간 안에 있는 경우
-    A.splice(A.search(1), A.search(3), A.search(2))  # after가 구간 내부
+    A.splice(A.search(1), A.search(3), A.search(2))
     assert str(A) == "1 ⇆ 2 ⇆ 3"
 
     # 6) start → end 구간이 끊겨 있는 경우
@@ -104,6 +129,29 @@ def test_splice():
     node3.prev = None
     B.splice(node2, node3, B.search(4))
     assert str(B) == "4 ⇆ 5 ⇆ 6"
+    assert B.search(4).owner == B
+    assert B.search(5).owner == B
+
+    # 7) start가 head인 경우 (더미 노드 조작 시도)
+    A = make_dll([1, 2, 3])
+    B = make_dll([4, 5])
+    B.splice(A.head, A.search(2), B.tail.prev)
+    assert str(A) == "1 ⇆ 2 ⇆ 3"
+    assert str(B) == "4 ⇆ 5"
+
+    # 8) end가 tail인 경우 (더미 노드 조작 시도)
+    B.splice(A.search(1), A.tail, B.tail.prev)
+    assert str(A) == "1 ⇆ 2 ⇆ 3"
+    assert str(B) == "4 ⇆ 5"
+
+    # 9) insert_after가 tail인 경우 (더미 노드 뒤에 삽입 시도)
+    B.splice(A.search(1), A.search(2), B.tail)
+    assert str(A) == "1 ⇆ 2 ⇆ 3"
+    assert str(B) == "4 ⇆ 5"
+
+    # 10) start == end == insert_after (자기 자신을 자기 뒤에 삽입)
+    A.splice(A.search(2), A.search(2), A.search(2))
+    assert str(A) == "1 ⇆ 2 ⇆ 3"
 
     print("splice test 통과")
 
@@ -131,6 +179,26 @@ def test_edge_cases():
     # 중복 키 검색
     dll = make_dll([1, 2, 1])
     assert dll.search(1).key == 1
+
+    # owner 변경 테스트 (owner 초기화 및 업데이트)
+    node = dll.search(2)
+    node.owner = None
+    assert node.owner is None
+    dll.update_owner(node, node)
+    assert node.owner == dll
+
+    dll2 = make_dll([10, 20, 30, 40])
+    start = dll2.search(20)
+    end = dll2.search(40)
+    curr = start
+    while curr != end.next:
+        curr.owner = None
+        curr = curr.next
+    dll2.update_owner(start, end)
+    curr = start
+    while curr != end.next:
+        assert curr.owner == dll2
+        curr = curr.next
     print("edge cases test 통과")
 
 

@@ -30,12 +30,9 @@ LeetCode의 ListNode 구조가 아닌 직접 구현한 `SinglyLinkedList` 클래
 더미 헤드를 포함하고 있기 때문에 LeetCode에 바로 제출할 수 있는 구조는 아닙니다.
 
 ---
-### 현재 상태
-- 현재 DoublyLinkedList의 splice 검사는 반복 횟수 제한(max_iter) 방식으로 구현되어 있습니다. <br>
-- ( → 추후 Node.owner 방식으로 구조 개선 예정 )
-
----
 ### 업데이트 이력  
+- 2025.08.11 : DLL splice 연산 유효성 검사 방식 개선하여 안정성 향상 <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; start-end 연결 여부 확인을 반복 횟수 제한(max_iter)에서 참조(Node.owner) 방식으로 변경
 - 2025.08.07 : 양방향 연결 리스트(DLL) 및 테스트 코드 추가
-- 2025.08.03 : SLL 예제 추가(4개), README 수정 
+- 2025.08.03 : SLL 예제 추가 (4개)
 - 2025.07.22 : 단방향 연결 리스트(SLL) 구현 및 예제 풀이, README 작성
